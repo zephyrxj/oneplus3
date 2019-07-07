@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2018 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2011-2019 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -960,24 +960,6 @@ typedef struct
 
 #endif
 
-//HAL MSG: SIR_HAL_UPDATE_CF_IND
-typedef struct
-{
-
-    tANI_U8  bssIdx;
-
-    /*
-    * cfpCount indicates how many DTIMs (including the current frame) appear before the next CFP start.
-    * A CFPCount of 0 indicates that the current DTIM marks the start of the CFP.
-    */
-    tANI_U8  cfpCount;
-
-    /* cfpPeriod indicates the number of DTIM intervals between the start of CFPs. */
-    tANI_U8 cfpPeriod;
-
-}tUpdateCFParams, *tpUpdateCFParams;
-
-
 
 //HAL MSG: SIR_HAL_UPDATE_DTIM_IND
 //This message not required, as Softmac is supposed to read these values from the beacon.
@@ -1572,4 +1554,24 @@ struct hal_thermal_mitigation_params
     hal_tt_level_config level_conf[WLAN_WMA_MAX_THERMAL_LEVELS];
 };
 
+struct hal_hpcs_pulse_params
+{
+    tANI_U32 vdev_id;
+    tANI_U32 start;
+    tANI_U32 sync_time;
+    tANI_U32 pulse_interval;
+    tANI_U32 active_sync_period;
+    tANI_U32 gpio_pin;
+    tANI_U32 pulse_width;
+};
+
+/**
+ * strcut hal_primary_params - Set primary peer
+ * @vdev_id: Vdev ID
+ * @bssid: MAC address for the primary peer
+ */
+struct hal_primary_params {
+	uint8_t session_id;
+	tSirMacAddr bssid;
+};
 #endif /* _HALMSGAPI_H_ */

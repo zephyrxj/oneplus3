@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -173,6 +173,8 @@ typedef struct
 #define WE_MEM_TRACE_DUMP                       11
 #endif
 #define WE_SET_THERMAL_THROTTLE_CONFIG          14
+#define WE_SET_HPCS_PULSE_PARAMS_CONFIG         15
+
 
 #define QCSAP_IOCTL_SET_CHANNEL_RANGE           (SIOCIWFIRSTPRIV+17)
 #define QCSAP_IOCTL_MODIFY_ACL                  (SIOCIWFIRSTPRIV+18)
@@ -192,6 +194,7 @@ typedef struct
 #define QCSAP_IOCTL_SET_FW_CRASH_INJECT         1
 #endif
 #define QCSAP_IOCTL_DUMP_DP_TRACE_LEVEL         2
+#define QCSAP_IOCTL_SET_PS_TDCC                 3
 
 #define QCSAP_IOCTL_PRIV_GET_RSSI               (SIOCIWFIRSTPRIV + 29)
 #define QCSAP_IOCTL_PRIV_GET_SOFTAP_LINK_SPEED  (SIOCIWFIRSTPRIV + 31)
