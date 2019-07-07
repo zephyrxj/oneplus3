@@ -25,11 +25,7 @@
  * Byte threshold to limit memory consumption for flip buffers.
  * The actual memory limit is > 2x this amount.
  */
-<<<<<<< HEAD
-#define TTYB_DEFAULT_MEM_LIMIT	131072
-=======
 #define TTYB_DEFAULT_MEM_LIMIT	(640 * 1024UL)
->>>>>>> v3.18.139
 
 /*
  * We default to dicing tty buffer allocations to this many characters
