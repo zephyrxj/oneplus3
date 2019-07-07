@@ -615,12 +615,6 @@ static void ks8851_rx_pkts3(struct ks8851_net *ks)
 	rxfc = ks8851_rdreg8(ks, KS_RXFC);
 	rxfct = rxfc;
 
-<<<<<<< HEAD
-	if (rxfc == 0) {
-		pr_debug("ks8851: Frame count is 0 NOP further\n");
-		return;
-	}
-=======
 	netif_dbg(ks, rx_status, ks->netdev,
 		  "%s: %d packets\n", __func__, rxfc);
 
@@ -670,7 +664,6 @@ static void ks8851_rx_pkts3(struct ks8851_net *ks)
 
 				if (netif_msg_pktdata(ks))
 					ks8851_dbg_dumpkkt(ks, rxpkt);
->>>>>>> v3.18.140
 
 	/* tabulate all frame sizes so we can do one read for all frames */
 	rxfifosize = ks8851_rdfifolen(ks, rxfc);
@@ -719,34 +712,9 @@ static void ks8851_rx_pkts3(struct ks8851_net *ks)
 			index32 = 0;
 			rxpkt = (u8 *)&buf32[index32];
 		}
-<<<<<<< HEAD
-		/* swap bytes to make the correct order */
-		for (; rxlen32 > 0; rxlen32--, index32++)
-			buf32[index32] = htonl(buf32[index32]);
-
-		/* send packet on its way */
-		skb = netdev_alloc_skb_ip_align(ks->netdev, rxalign);
-		skb_add_data(skb, rxpkt, rxalign);
-
-		if (netif_msg_pktdata(ks))
-			ks8851_dbg_dumpkkt(ks, rxpkt);
-
-		skb->protocol = eth_type_trans(skb, ks->netdev);
-		skb->tstamp = ktime_get();
-		netif_rx_ni(skb);
-
-		/* record packet stats */
-		ks->netdev->stats.rx_packets++;
-		ks->netdev->stats.rx_bytes += rxlen;
-			if (totallen > rxfifosize) {
-				kfree(buf1);
-				break;
-			}
-=======
 
 		/* end DMA access and dequeue packet */
 		ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr | RXQCR_RRXEF);
->>>>>>> v3.18.140
 	}
 	ks8851_wrreg16(ks, KS_RXQCR, ks->rc_rxqcr);
 	kfree(buf);
@@ -1812,14 +1780,10 @@ err_netdev:
 err_id:
 	if (gpio_is_valid(gpio))
 		gpio_set_value(gpio, 0);
-<<<<<<< HEAD
-err_id:
-=======
 	regulator_disable(ks->vdd_reg);
 err_reg:
 	regulator_disable(ks->vdd_io);
 err_reg_io:
->>>>>>> v3.18.140
 err_gpio:
 	free_netdev(ndev);
 	return ret;
