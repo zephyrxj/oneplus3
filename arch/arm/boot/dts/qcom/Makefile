@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-dtb-$(CONFIG_ARCH_MSM8996) += msm8996-v3-pmi8996-mtp_15801.dtb \
-	msm8996pro-pmi8996-mtp_15811.dtb
-	#msm8996-v2-pmi8994-mtp.dtb \
-=======
 dtb-$(CONFIG_ARCH_MSM8996) += msm8996-v2-pmi8994-mtp.dtb \
->>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	msm8996-v2-pmi8994-pmk8001-mtp.dtb \
 	msm8996-v2-pmi8994-pm8004-mtp.dtb \
 	msm8996-v2-pmi8994-pm8004-pmk8001-mtp.dtb \
@@ -150,18 +144,10 @@ dtb-$(CONFIG_ARCH_MDM9640) += mdm9640-sim.dtb \
 
 dtb-$(CONFIG_ARCH_MDM9650) += mdm9650-ttp.dtb \
 	mdm9650-pcie-ep-ttp.dtb \
-<<<<<<< HEAD
-	mdm9650-nand-dualwifi-mtp.dtb \
-=======
->>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	mdm9650-v1.1-emmc-cdp.dtb \
 	mdm9650-v1.1-nand-cdp.dtb \
 	mdm9650-v1.1-emmc-mtp.dtb \
 	mdm9650-v1.1-nand-mtp.dtb \
-<<<<<<< HEAD
-=======
-	mdm9650-v1.1-nand-dualwifi-mtp.dtb \
->>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	mdm9650-v1.1-nand-ccard-v2.dtb \
 	mdm9650-v1.1-emmc-pcie-ep-mtp.dtb \
 	mdm9650-v1.1-nand-pcie-ep-mtp.dtb \
@@ -310,13 +296,8 @@ dtb-$(CONFIG_ARCH_MSM8909) += msm8909-pm8916-mtp.dtb \
         msm8909-1gb-qrd-skuc.dtb \
         msm8909-1gb-qrd-skue.dtb \
         msm8909-qrd-skue.dtb \
-<<<<<<< HEAD
-	msm8909w-wtp.dtb \
-	apq8009w-wtp.dtb \
-=======
 	sdw2100-msm8909w-wtp.dtb \
 	sdw2100-apq8009w-wtp.dtb \
->>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	apq8009w-cdp.dtb \
 	sdw2100-msm8909w-swoctp.dtb \
 	msm8909w-swoctp-circpanel.dtb \
