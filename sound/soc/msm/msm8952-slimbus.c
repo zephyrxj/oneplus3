@@ -1806,7 +1806,11 @@ static const char *const slim4_tx_ch_text[] = {"One", "Two", "Three", "Four",
 						"Eight"};
 static const char *const vi_feed_ch_text[] = {"One", "Two"};
 static char const *rx_bit_format_text[] = {"S16_LE", "S24_LE", "S24_3LE",
+<<<<<<< HEAD
 					"S32_LE"};
+=======
+								"S32_LE"};
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 static char const *slim0_rx_sample_rate_text[] = {"KHZ_48", "KHZ_96",
 	"KHZ_192", "KHZ_44P1", "KHZ_16"};
 static char const *slim4_rx_sample_rate_text[] = {"KHZ_48", "KHZ_96",
@@ -3166,22 +3170,6 @@ int msm_tdm_startup(struct snd_pcm_substream *substream)
 			val = ioread32(pdata->vaddr_gpio_mux_quin_ctl);
 			val = val | 0x00000001;
 			iowrite32(val, pdata->vaddr_gpio_mux_quin_ctl);
-		} else {
-			return -EINVAL;
-		}
-
-		if (pdata->vaddr_gpio_mux_mic_ext_clk_ctl) {
-			val = ioread32(pdata->vaddr_gpio_mux_mic_ext_clk_ctl);
-			val = val | 0x00000001;
-			iowrite32(val, pdata->vaddr_gpio_mux_mic_ext_clk_ctl);
-		} else {
-			return -EINVAL;
-		}
-
-		if (pdata->vaddr_gpio_mux_sec_tlmm_ctl) {
-			val = ioread32(pdata->vaddr_gpio_mux_sec_tlmm_ctl);
-			val = val | 0x00000002;
-			iowrite32(val, pdata->vaddr_gpio_mux_sec_tlmm_ctl);
 		} else {
 			return -EINVAL;
 		}

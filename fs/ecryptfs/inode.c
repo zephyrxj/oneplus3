@@ -293,7 +293,10 @@ ecryptfs_create(struct inode *directory_inode, struct dentry *ecryptfs_dentry,
 		iput(ecryptfs_inode);
 		goto out;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	crypt_stat = &ecryptfs_inode_to_private(ecryptfs_inode)->crypt_stat;
 	if (get_events() && get_events()->open_cb)
 			get_events()->open_cb(

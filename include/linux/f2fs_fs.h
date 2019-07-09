@@ -109,15 +109,22 @@ struct f2fs_super_block {
 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
 	__u8 hot_ext_count;		/* # of hot file extension */
+<<<<<<< HEAD
 	__u8 reserved[310];		/* valid reserved region */
 	__le32 crc;			/* checksum of superblock */
+=======
+	__u8 reserved[314];		/* valid reserved region */
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 } __packed;
 
 /*
  * For checkpoint
  */
+<<<<<<< HEAD
 #define CP_DISABLED_FLAG		0x00001000
 #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
 #define CP_NOCRC_RECOVERY_FLAG	0x00000200
 #define CP_TRIMMED_FLAG		0x00000100
@@ -304,6 +311,14 @@ struct f2fs_node {
  * For NAT entries
  */
 #define NAT_ENTRY_PER_BLOCK (PAGE_SIZE / sizeof(struct f2fs_nat_entry))
+<<<<<<< HEAD
+=======
+#define NAT_ENTRY_BITMAP_SIZE	((NAT_ENTRY_PER_BLOCK + 7) / 8)
+#define NAT_ENTRY_BITMAP_SIZE_ALIGNED				\
+	((NAT_ENTRY_BITMAP_SIZE + BITS_PER_LONG - 1) /		\
+	BITS_PER_LONG * BITS_PER_LONG)
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 struct f2fs_nat_entry {
 	__u8 version;		/* latest version of cached nat entry */

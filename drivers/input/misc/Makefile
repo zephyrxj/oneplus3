@@ -85,5 +85,9 @@ ifeq ($(CONFIG_BOSCH_BMA2X2_ENABLE_INT2),y)
 endif
 obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
 obj-$(CONFIG_INPUT_PIXART_OTS_PAT9125_SWITCH)	+= ots_pat9125/
+<<<<<<< HEAD
 obj-$(CONFIG_TRI_STATE_KEY) += tri_state_key.o
 obj-$(CONFIG_FINGERPRINT_FPC1022) += fpc1020_tee.o
+=======
+obj-$(CONFIG_STMVL53L0X)	+= vl53l0x/
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085

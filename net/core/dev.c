@@ -4439,6 +4439,7 @@ static void net_rps_send_ipi(struct softnet_data *remsd)
 	while (remsd) {
 		struct softnet_data *next = remsd->rps_ipi_next;
 
+<<<<<<< HEAD
 		if (cpu_online(remsd->cpu)) {
 			smp_call_function_single_async(remsd->cpu, &remsd->csd);
 		} else {
@@ -4446,6 +4447,10 @@ static void net_rps_send_ipi(struct softnet_data *remsd)
 			remsd->backlog.state = 0;
 			rps_unlock(remsd);
 		}
+=======
+		if (cpu_online(remsd->cpu))
+			smp_call_function_single_async(remsd->cpu, &remsd->csd);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		remsd = next;
 	}
 #endif

@@ -34,8 +34,11 @@ enum {
 	Opt_reserved_mb,
 	Opt_gid_derivation,
 	Opt_default_normal,
+<<<<<<< HEAD
 	Opt_nocache,
 	Opt_unshared_obb,
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	Opt_err,
 };
 
@@ -49,7 +52,10 @@ static const match_table_t sdcardfs_tokens = {
 	{Opt_multiuser, "multiuser"},
 	{Opt_gid_derivation, "derive_gid"},
 	{Opt_default_normal, "default_normal"},
+<<<<<<< HEAD
 	{Opt_unshared_obb, "unshared_obb"},
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	{Opt_reserved_mb, "reserved_mb=%u"},
 	{Opt_nocache, "nocache"},
 	{Opt_err, NULL}
@@ -75,7 +81,10 @@ static int parse_options(struct super_block *sb, char *options, int silent,
 	/* by default, gid derivation is off */
 	opts->gid_derivation = false;
 	opts->default_normal = false;
+<<<<<<< HEAD
 	opts->nocache = false;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	*debug = 0;
 
@@ -133,12 +142,15 @@ static int parse_options(struct super_block *sb, char *options, int silent,
 		case Opt_default_normal:
 			opts->default_normal = true;
 			break;
+<<<<<<< HEAD
 		case Opt_nocache:
 			opts->nocache = true;
 			break;
 		case Opt_unshared_obb:
 			opts->unshared_obb = true;
 			break;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		/* unknown option */
 		default:
 			if (!silent)
@@ -192,7 +204,10 @@ int parse_options_remount(struct super_block *sb, char *options, int silent,
 				return 0;
 			vfsopts->mask = option;
 			break;
+<<<<<<< HEAD
 		case Opt_unshared_obb:
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		case Opt_default_normal:
 		case Opt_multiuser:
 		case Opt_userid:
@@ -278,7 +293,7 @@ static int sdcardfs_read_super(struct vfsmount *mnt, struct super_block *sb,
 
 	pr_info("sdcardfs: dev_name -> %s\n", dev_name);
 	pr_info("sdcardfs: options -> %s\n", (char *)raw_data);
-	pr_info("sdcardfs: mnt -> %p\n", mnt);
+	pr_info("sdcardfs: mnt -> %pK\n", mnt);
 
 	/* parse lower path */
 	err = kern_path(dev_name, LOOKUP_FOLLOW | LOOKUP_DIRECTORY,
@@ -382,6 +397,10 @@ static int sdcardfs_read_super(struct vfsmount *mnt, struct super_block *sb,
 	/* no longer needed: free_dentry_private_data(sb->s_root); */
 out_freeroot:
 	dput(sb->s_root);
+<<<<<<< HEAD
+=======
+	sb->s_root = NULL;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 out_sput:
 	/* drop refs we took earlier */
 	atomic_dec(&lower_sb->s_active);

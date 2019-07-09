@@ -454,6 +454,10 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
 				struct rb_node **insert_p,
 				struct rb_node *insert_parent)
 {
+<<<<<<< HEAD
+=======
+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	struct rb_node **p;
 	struct rb_node *parent = NULL;
 	struct extent_node *en = NULL;
@@ -710,6 +714,9 @@ void f2fs_drop_extent_tree(struct inode *inode)
 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
 	bool updated = false;
+
+	if (!f2fs_may_extent_tree(inode))
+		return;
 
 	if (!f2fs_may_extent_tree(inode))
 		return;

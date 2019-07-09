@@ -244,10 +244,17 @@ static void mhi_dev_net_read_completion_cb(void *req)
 	struct sk_buff *skb = mreq->context;
 	unsigned long   flags;
 
+<<<<<<< HEAD
 	skb->len = mreq->transfer_len;
 	skb->protocol =
 		mhi_dev_net_eth_type_trans(skb);
 	skb_put(skb, mreq->transfer_len);
+=======
+	skb->len = mreq->actual_len;
+	skb->protocol =
+		mhi_dev_net_eth_type_trans(skb);
+	skb_put(skb, mreq->actual_len);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	net_handle->dev->stats.rx_packets++;
 	skb->dev = net_handle->dev;
 	netif_rx(skb);

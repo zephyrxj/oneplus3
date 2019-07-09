@@ -683,12 +683,21 @@ static int msm_isp_start_stats_stream(struct vfe_device *vfe_dev,
 			stream_cfg_cmd->num_streams);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 
 	mutex_lock(&vfe_dev->buf_mgr->lock);
+=======
+	mutex_lock(&vfe_dev->buf_mgr->lock);
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	num_stats_comp_mask =
 		vfe_dev->hw_info->stats_hw_info->num_stats_comp_mask;
 	rc = vfe_dev->hw_info->vfe_ops.stats_ops.check_streams(
 		stats_data->stream_info);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	if (rc < 0) {
 		mutex_unlock(&vfe_dev->buf_mgr->lock);
 		return rc;

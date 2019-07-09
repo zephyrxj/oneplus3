@@ -237,7 +237,11 @@ EXPORT_SYMBOL(ce_aes_setkey);
 static struct crypto_alg aes_alg = {
 	.cra_name		= "aes",
 	.cra_driver_name	= "aes-ce",
+<<<<<<< HEAD
 	.cra_priority		= 299,
+=======
+	.cra_priority		= 250,
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	.cra_flags		= CRYPTO_ALG_TYPE_CIPHER,
 	.cra_blocksize		= AES_BLOCK_SIZE,
 	.cra_ctxsize		= sizeof(struct crypto_aes_ctx),

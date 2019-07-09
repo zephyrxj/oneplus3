@@ -1090,6 +1090,9 @@ static int msm_compr_configure_dsp_for_playback
 	int dir = IN, ret = 0;
 	struct audio_client *ac = prtd->audio_client;
 	uint32_t stream_index;
+	union snd_codec_options *codec_options =
+		&(prtd->codec_param.codec.options);
+
 	struct asm_softpause_params softpause = {
 		.enable = SOFT_PAUSE_ENABLE,
 		.period = SOFT_PAUSE_PERIOD,
@@ -1114,6 +1117,7 @@ static int msm_compr_configure_dsp_for_playback
 		bits_per_sample = 24;
 	else if (prtd->codec_param.codec.format == SNDRV_PCM_FORMAT_S32_LE)
 		bits_per_sample = 32;
+<<<<<<< HEAD
     //use 24bits to get rid of 16bits innate noise
     //mark by globale value to open adm 24bits
     //lifei modified in 20160430
@@ -1121,6 +1125,11 @@ static int msm_compr_configure_dsp_for_playback
         bits_per_sample = 24;
         gis_24bits = 1;
     }
+=======
+	else if (prtd->codec == FORMAT_FLAC && codec_options &&
+		(codec_options->flac_dec.sample_size != 0))
+		bits_per_sample = codec_options->flac_dec.sample_size;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if (prtd->compr_passthr != LEGACY_PCM) {
 		ret = q6asm_open_write_compressed(ac, prtd->codec,
@@ -1960,6 +1969,7 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
 	unsigned long flags;
 	int stream_id;
 	uint32_t stream_index;
+<<<<<<< HEAD
     //use 24bits to get rid of 16bits innate noise
     //mark by globale value to open adm 24bits
     //lifei modified in 20160430
@@ -1967,6 +1977,11 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
     if (prtd->codec_param.codec.bit_rate == 24) {
         bits_per_sample = 24;
     }
+=======
+	uint16_t bits_per_sample = 16;
+	union snd_codec_options *codec_options =
+		&(prtd->codec_param.codec.options);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	spin_lock_irqsave(&prtd->lock, flags);
 	if (atomic_read(&prtd->error)) {
@@ -2395,6 +2410,9 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
 		else if (prtd->codec_param.codec.format ==
 			 SNDRV_PCM_FORMAT_S32_LE)
 			bits_per_sample = 32;
+		else if (prtd->codec == FORMAT_FLAC && codec_options &&
+			(codec_options->flac_dec.sample_size != 0))
+			bits_per_sample = codec_options->flac_dec.sample_size;
 
 		pr_debug("%s: open_write stream_id %d bits_per_sample %d",
 				__func__, stream_id, bits_per_sample);

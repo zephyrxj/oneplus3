@@ -72,6 +72,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
 
 	set_inode_flag(inode, FI_NEW_INODE);
 
+	set_inode_flag(inode, FI_NEW_INODE);
+
 	/* If the directory encrypted, then we should encrypt the inode. */
 	if ((f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
 				f2fs_may_encrypt(inode))
@@ -116,8 +118,11 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
 	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL)
 		set_inode_flag(inode, FI_PROJ_INHERIT);
 
+<<<<<<< HEAD
 	f2fs_set_inode_flags(inode);
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	trace_f2fs_new_inode(inode, 0);
 	return inode;
 
@@ -161,6 +166,7 @@ static inline void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *
 {
 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
 	int i, cold_count, hot_count;
+<<<<<<< HEAD
 
 	down_read(&sbi->sb_lock);
 
@@ -246,6 +252,90 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
 				F2FS_EXTENSION_LEN * hot_count);
 		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
 	}
+=======
+
+	down_read(&sbi->sb_lock);
+
+	cold_count = le32_to_cpu(sbi->raw_super->extension_count);
+	hot_count = sbi->raw_super->hot_ext_count;
+
+	for (i = 0; i < cold_count + hot_count; i++) {
+		if (!is_extension_exist(name, extlist[i]))
+			continue;
+		if (i < cold_count)
+			file_set_cold(inode);
+		else
+			file_set_hot(inode);
+		break;
+	}
+
+	up_read(&sbi->sb_lock);
+}
+
+int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+							bool hot, bool set)
+{
+	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+	int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
+	int hot_count = sbi->raw_super->hot_ext_count;
+	int total_count = cold_count + hot_count;
+	int start, count;
+	int i;
+
+	if (set) {
+		if (total_count == F2FS_MAX_EXTENSION)
+			return -EINVAL;
+	} else {
+		if (!hot && !cold_count)
+			return -EINVAL;
+		if (hot && !hot_count)
+			return -EINVAL;
+	}
+
+	if (hot) {
+		start = cold_count;
+		count = total_count;
+	} else {
+		start = 0;
+		count = cold_count;
+	}
+
+	for (i = start; i < count; i++) {
+		if (strcmp(name, extlist[i]))
+			continue;
+
+		if (set)
+			return -EINVAL;
+
+		memcpy(extlist[i], extlist[i + 1],
+				F2FS_EXTENSION_LEN * (total_count - i - 1));
+		memset(extlist[total_count - 1], 0, F2FS_EXTENSION_LEN);
+		if (hot)
+			sbi->raw_super->hot_ext_count = hot_count - 1;
+		else
+			sbi->raw_super->extension_count =
+						cpu_to_le32(cold_count - 1);
+		return 0;
+	}
+
+	if (!set)
+		return -EINVAL;
+
+	if (hot) {
+		strncpy(extlist[count], name, strlen(name));
+		sbi->raw_super->hot_ext_count = hot_count + 1;
+	} else {
+		char buf[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];
+
+		memcpy(buf, &extlist[cold_count],
+				F2FS_EXTENSION_LEN * hot_count);
+		memset(extlist[cold_count], 0, F2FS_EXTENSION_LEN);
+		strncpy(extlist[cold_count], name, strlen(name));
+		memcpy(&extlist[cold_count + 1], buf,
+				F2FS_EXTENSION_LEN * hot_count);
+		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
+	}
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	return 0;
 }
 
@@ -259,9 +349,12 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 
 	if (unlikely(f2fs_cp_error(sbi)))
 		return -EIO;
+<<<<<<< HEAD
 	err = f2fs_is_checkpoint_ready(sbi);
 	if (err)
 		return err;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	dquot_initialize(dir);
 
@@ -306,9 +399,12 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
 
 	if (unlikely(f2fs_cp_error(sbi)))
 		return -EIO;
+<<<<<<< HEAD
 	err = f2fs_is_checkpoint_ready(sbi);
 	if (err)
 		return err;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	err = fscrypt_prepare_link(old_dentry, dir, dentry);
 	if (err)
@@ -555,9 +651,12 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
 
 	if (unlikely(f2fs_cp_error(sbi)))
 		return -EIO;
+<<<<<<< HEAD
 	err = f2fs_is_checkpoint_ready(sbi);
 	if (err)
 		return err;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	err = fscrypt_prepare_symlink(dir, symname, len, dir->i_sb->s_blocksize,
 				      &disk_link);
@@ -818,9 +917,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
 
 	if (unlikely(f2fs_cp_error(sbi)))
 		return -EIO;
+<<<<<<< HEAD
 	err = f2fs_is_checkpoint_ready(sbi);
 	if (err)
 		return err;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if (is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
 			(!projid_eq(F2FS_I(new_dir)->i_projid,
@@ -834,7 +936,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	if (new_inode)
 		dquot_initialize(new_inode);
 
+<<<<<<< HEAD
 	err = -ENOENT;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
 	if (!old_entry) {
 		if (IS_ERR(old_page))
@@ -1006,9 +1111,12 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
 
 	if (unlikely(f2fs_cp_error(sbi)))
 		return -EIO;
+<<<<<<< HEAD
 	err = f2fs_is_checkpoint_ready(sbi);
 	if (err)
 		return err;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if ((is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
 			!projid_eq(F2FS_I(new_dir)->i_projid,

@@ -62,7 +62,10 @@ struct thread_info {
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 #define INIT_THREAD_INFO(tsk)						\
 {									\
+<<<<<<< HEAD
 	.exec_domain	= &default_exec_domain,				\
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	.preempt_count	= INIT_PREEMPT_COUNT,				\
 	.addr_limit	= KERNEL_DS,					\
 }
@@ -76,6 +79,14 @@ struct thread_info {
 	.addr_limit	= KERNEL_DS,					\
 }
 #define init_thread_info	(init_thread_union.thread_info)
+<<<<<<< HEAD
+=======
+
+/*
+ * how to get the current stack pointer from C
+ */
+register unsigned long current_stack_pointer asm ("sp");
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 /*
  * how to get the thread information struct from C

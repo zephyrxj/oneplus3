@@ -81,7 +81,11 @@
 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & ((sbi)->blocks_per_seg - 1))
 
 #define GET_SEGNO(sbi, blk_addr)					\
+<<<<<<< HEAD
 	((!is_valid_data_blkaddr(sbi, blk_addr)) ?			\
+=======
+	((!is_valid_blkaddr(blk_addr)) ?			\
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
 		GET_SEGNO_FROM_SEG0(sbi, blk_addr)))
 #define BLKS_PER_SEC(sbi)					\
@@ -211,7 +215,11 @@ struct segment_allocation {
 #define IS_DUMMY_WRITTEN_PAGE(page)			\
 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
 
+<<<<<<< HEAD
 #define MAX_SKIP_GC_COUNT			16
+=======
+#define MAX_SKIP_ATOMIC_COUNT			16
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 struct inmem_pages {
 	struct list_head list;
@@ -549,11 +557,19 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi)
 		segno = CURSEG_I(sbi, i)->segno;
 		left_blocks = sbi->blocks_per_seg -
 			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+<<<<<<< HEAD
 
 		if (node_blocks > left_blocks)
 			return false;
 	}
 
+=======
+
+		if (node_blocks > left_blocks)
+			return false;
+	}
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	/* check current data segment */
 	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
 	left_blocks = sbi->blocks_per_seg -
@@ -659,10 +675,20 @@ static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
 {
 	struct f2fs_sb_info *sbi = fio->sbi;
 
+<<<<<<< HEAD
 	if (__is_meta_io(fio))
 		verify_blkaddr(sbi, blk_addr, META_GENERIC);
 	else
 		verify_blkaddr(sbi, blk_addr, DATA_GENERIC);
+=======
+	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
+				(!is_read_io(fio->op) || fio->is_meta))
+		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
+				blk_addr >= MAIN_BLKADDR(sbi));
+	else
+		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
+				blk_addr >= MAX_BLKADDR(sbi));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 /*

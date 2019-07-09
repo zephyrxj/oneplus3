@@ -2884,8 +2884,13 @@ static int _ffs_func_bind(struct usb_configuration *c,
 	struct ffs_data *ffs = func->ffs;
 
 	const int full = !!func->ffs->fs_descs_count;
+<<<<<<< HEAD
 	const int high = !!func->ffs->hs_descs_count;
 	const int super = !!func->ffs->ss_descs_count;
+=======
+	const int high = func->ffs->hs_descs_count;
+	const int super = func->ffs->ss_descs_count;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	int fs_len, hs_len, ss_len, ret, i;
 
@@ -3155,7 +3160,7 @@ static int ffs_func_setup(struct usb_function *f,
 	__ffs_event_add(ffs, FUNCTIONFS_SETUP);
 	spin_unlock_irqrestore(&ffs->ev.waitq.lock, flags);
 
-	return creq->wLength == 0 ? USB_GADGET_DELAYED_STATUS : 0;
+	return 0;
 }
 
 static void ffs_func_suspend(struct usb_function *f)

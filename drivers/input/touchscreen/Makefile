@@ -90,9 +90,14 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI4)		+= synaptics_i2c_rmi4.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_RMI4_DEV)	+= synaptics_rmi_dev.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE) 	+= synaptics_fw_update.o
 obj-$(CONFIG_TOUCHSCREEN_GT9XX)		+= gt9xx/
+<<<<<<< HEAD
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_S3320_I2C_RMI) += synaptics_driver_s3320.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_S3320_I2C_RMI) += synaptics_s3320_redremote.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_S1302_I2C_RMI) += synaptics_driver_s1302.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_S1302_I2C_RMI) += synaptics_s1302_redremote.o
 obj-$(CONFIG_SWEEP2SLEEP)		+= sweep2sleep.o
 obj-$(CONFIG_TOUCHSCREEN_HIMAX_CHIPSET)	+= hxchipset/
+=======
+obj-$(CONFIG_TOUCHSCREEN_HIMAX_CHIPSET)	+= hxchipset/
+obj-$(CONFIG_TOUCHSCREEN_FTS)		+= focaltech_touch/
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085

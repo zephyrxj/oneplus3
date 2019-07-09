@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016, 2018, The Linux Foundation. All rights reserved.
+=======
+ * Copyright (c) 2016, 2018 The Linux Foundation. All rights reserved.
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -23,6 +27,13 @@
 	reg = <0x0 0x89e00000 0x0 0x0700000>;
 };
 
+<<<<<<< HEAD
+=======
+&qcom_seecom {
+	reg = <0x87a00000 0x200000>;
+};
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 &reserved_mem {
 	linux,cma {
 		compatible = "shared-dma-pool";

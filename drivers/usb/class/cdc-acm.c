@@ -381,7 +381,7 @@ static int acm_submit_read_urb(struct acm *acm, int index, gfp_t mem_flags)
 
 	res = usb_submit_urb(acm->read_urbs[index], mem_flags);
 	if (res) {
-		if (res != -EPERM && res != -ENODEV) {
+		if (res != -EPERM) {
 			dev_err(&acm->data->dev,
 					"%s - usb_submit_urb failed: %d\n",
 					__func__, res);
@@ -1146,7 +1146,7 @@ static int acm_probe(struct usb_interface *intf,
 		}
 	}
 
-	while (buflen >= 3) { /* minimum length making sense */
+	while (buflen > 0) {
 		elength = buffer[0];
 		if ((buflen < elength) || (elength < 3)) {
 			dev_err(&intf->dev, "invalid descriptor buffer length\n");
@@ -1721,9 +1721,6 @@ static const struct usb_device_id acm_ids[] = {
 	{ USB_DEVICE(0x0ace, 0x1611), /* ZyDAS 56K USB MODEM - new version */
 	.driver_info = SINGLE_RX_URB, /* firmware bug */
 	},
-	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
-	.driver_info = SINGLE_RX_URB,
-	},
 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
 	},
@@ -1791,6 +1788,7 @@ static const struct usb_device_id acm_ids[] = {
 	{ USB_DEVICE(0x1576, 0x03b1), /* Maretron USB100 */
 	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
 	},
+<<<<<<< HEAD
 	{ USB_DEVICE(0xfff0, 0x0100), /* DATECS FP-2000 */
 	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
 	},
@@ -1800,6 +1798,8 @@ static const struct usb_device_id acm_ids[] = {
 	{ USB_DEVICE(0x0ca6, 0xa050), /* Castles VEGA3000 */
 	.driver_info = NO_UNION_NORMAL, /* reports zero length descriptor */
 	},
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	{ USB_DEVICE(0x2912, 0x0001), /* ATOL FPrint */
 	.driver_info = CLEAR_HALT_CONDITIONS,

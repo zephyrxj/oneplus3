@@ -167,6 +167,7 @@ found:
 }
 
 bool f2fs_need_SSR(struct f2fs_sb_info *sbi)
+<<<<<<< HEAD
 {
 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
@@ -185,6 +186,24 @@ bool f2fs_need_SSR(struct f2fs_sb_info *sbi)
 
 void f2fs_register_inmem_page(struct inode *inode, struct page *page)
 {
+=======
+{
+	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+
+	if (test_opt(sbi, LFS))
+		return false;
+	if (sbi->gc_mode == GC_URGENT)
+		return true;
+
+	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+}
+
+void f2fs_register_inmem_page(struct inode *inode, struct page *page)
+{
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 	struct f2fs_inode_info *fi = F2FS_I(inode);
 	struct inmem_pages *new;
@@ -249,6 +268,7 @@ retry:
 				err = -EAGAIN;
 				goto next;
 			}
+<<<<<<< HEAD
 
 			err = f2fs_get_node_info(sbi, dn.nid, &ni);
 			if (err) {
@@ -256,6 +276,9 @@ retry:
 				return err;
 			}
 
+=======
+			f2fs_get_node_info(sbi, dn.nid, &ni);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			if (cur->old_addr == NEW_ADDR) {
 				f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
 				f2fs_update_data_blkaddr(&dn, NEW_ADDR);
@@ -375,7 +398,11 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
 		.io_type = FS_DATA_IO,
 	};
 	struct list_head revoke_list;
+<<<<<<< HEAD
 	bool submit_bio = false;
+=======
+	pgoff_t last_idx = ULONG_MAX;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	int err = 0;
 
 	INIT_LIST_HEAD(&revoke_list);
@@ -965,6 +992,8 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
 	}
 	spin_unlock_irqrestore(&dc->lock, flags);
 
+	trace_f2fs_remove_discard(dc->bdev, dc->start, dc->len);
+
 	f2fs_bug_on(sbi, dc->ref);
 
 	if (dc->error == -EOPNOTSUPP)
@@ -1110,7 +1139,10 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
 	/* common policy */
 	dpolicy->type = discard_type;
 	dpolicy->sync = true;
+<<<<<<< HEAD
 	dpolicy->ordered = false;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	dpolicy->granularity = granularity;
 
 	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
@@ -1122,7 +1154,10 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
 		dpolicy->io_aware = true;
 		dpolicy->sync = false;
+<<<<<<< HEAD
 		dpolicy->ordered = true;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
 			dpolicy->granularity = 1;
 			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
@@ -1140,6 +1175,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
 	}
 }
 
+<<<<<<< HEAD
 static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
 				struct block_device *bdev, block_t lstart,
 				block_t start, block_t len);
@@ -1148,6 +1184,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
 						struct discard_policy *dpolicy,
 						struct discard_cmd *dc,
 						unsigned int *issued)
+=======
+
+/* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+						struct discard_policy *dpolicy,
+						struct discard_cmd *dc)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 {
 	struct block_device *bdev = dc->bdev;
 	struct request_queue *q = bdev_get_queue(bdev);
@@ -1156,14 +1199,20 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
 	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
 					&(dcc->fstrim_list) : &(dcc->wait_list);
+<<<<<<< HEAD
 	int flag = dpolicy->sync ? REQ_SYNC : 0;
 	block_t lstart, start, len, total_len;
 	int err = 0;
+=======
+	struct bio *bio = NULL;
+	int flag = dpolicy->sync ? REQ_SYNC : 0;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if (dc->state != D_PREP)
 		return 0;
 
 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+<<<<<<< HEAD
 		return 0;
 
 	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
@@ -1183,6 +1232,29 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
 		if (len > max_discard_blocks) {
 			len = max_discard_blocks;
 			last = false;
+=======
+		return;
+
+	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
+
+	dc->error = __blkdev_issue_discard(dc->bdev,
+				SECTOR_FROM_BLOCK(dc->start),
+				SECTOR_FROM_BLOCK(dc->len),
+				GFP_NOFS, 0, &bio);
+	if (!dc->error) {
+		/* should keep before submission to avoid D_DONE right away */
+		dc->state = D_SUBMIT;
+		atomic_inc(&dcc->issued_discard);
+		atomic_inc(&dcc->issing_discard);
+		if (bio) {
+			bio->bi_private = dc;
+			bio->bi_end_io = f2fs_submit_discard_endio;
+			submit_bio(flag, bio);
+			list_move_tail(&dc->list, wait_list);
+			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
+
+			f2fs_update_iostat(sbi, FS_DISCARD, 1);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		}
 
 		(*issued)++;
@@ -1333,6 +1405,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
 			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
 	block_t end = lstart + len;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&dcc->cmd_lock);
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
 					NULL, lstart,
 					(struct rb_entry **)&prev_dc,
@@ -1428,7 +1505,11 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
 	return 0;
 }
 
+<<<<<<< HEAD
 static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+=======
+static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 					struct discard_policy *dpolicy)
 {
 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
@@ -1436,6 +1517,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
 	struct discard_cmd *dc;
 	struct blk_plug plug;
+<<<<<<< HEAD
 	unsigned int pos = dcc->next_pos;
 	unsigned int issued = 0;
 	bool io_interrupted = false;
@@ -1505,19 +1587,33 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
 		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
 			return __issue_discard_cmd_orderly(sbi, dpolicy);
 
+=======
+	int i, iter = 0, issued = 0;
+	bool io_interrupted = false;
+
+	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+		if (i + 1 < dpolicy->granularity)
+			break;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		pend_list = &dcc->pend_list[i];
 
 		mutex_lock(&dcc->cmd_lock);
 		if (list_empty(pend_list))
 			goto next;
+<<<<<<< HEAD
 		if (unlikely(dcc->rbtree_check))
 			f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
 								&dcc->root));
+=======
+		f2fs_bug_on(sbi,
+			!f2fs_check_rb_tree_consistence(sbi, &dcc->root));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		blk_start_plug(&plug);
 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
 			f2fs_bug_on(sbi, dc->state != D_PREP);
 
 			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
+<<<<<<< HEAD
 						!is_idle(sbi, DISCARD_TIME)) {
 				io_interrupted = true;
 				break;
@@ -1526,13 +1622,28 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
 			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
 
 			if (issued >= dpolicy->max_requests)
+=======
+								!is_idle(sbi)) {
+				io_interrupted = true;
+				goto skip;
+			}
+
+			__submit_discard_cmd(sbi, dpolicy, dc);
+			issued++;
+skip:
+			if (++iter >= dpolicy->max_requests)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 				break;
 		}
 		blk_finish_plug(&plug);
 next:
 		mutex_unlock(&dcc->cmd_lock);
 
+<<<<<<< HEAD
 		if (issued >= dpolicy->max_requests || io_interrupted)
+=======
+		if (iter >= dpolicy->max_requests)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			break;
 	}
 
@@ -1562,6 +1673,7 @@ static bool __drop_discard_cmd(struct f2fs_sb_info *sbi)
 	mutex_unlock(&dcc->cmd_lock);
 
 	return dropped;
+<<<<<<< HEAD
 }
 
 void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi)
@@ -1569,6 +1681,15 @@ void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi)
 	__drop_discard_cmd(sbi);
 }
 
+=======
+}
+
+void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi)
+{
+	__drop_discard_cmd(sbi);
+}
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 static unsigned int __wait_one_discard_bio(struct f2fs_sb_info *sbi,
 							struct discard_cmd *dc)
 {
@@ -1630,6 +1751,7 @@ next:
 	return trimmed;
 }
 
+<<<<<<< HEAD
 static unsigned int __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
 						struct discard_policy *dpolicy)
 {
@@ -1646,6 +1768,23 @@ static unsigned int __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
 	discard_blks += __wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
 
 	return discard_blks;
+=======
+static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
+						struct discard_policy *dpolicy)
+{
+	struct discard_policy dp;
+
+	if (dpolicy) {
+		__wait_discard_cmd_range(sbi, dpolicy, 0, UINT_MAX);
+		return;
+	}
+
+	/* wait all */
+	__init_discard_policy(sbi, &dp, DPOLICY_FSTRIM, 1);
+	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+	__init_discard_policy(sbi, &dp, DPOLICY_UMOUNT, 1);
+	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 /* This should be covered by global mutex, &sit_i->sentry_lock */
@@ -1698,8 +1837,11 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
 
 	/* just to make sure there is no pending discard commands */
 	__wait_all_discard_cmd(sbi, NULL);
+<<<<<<< HEAD
 
 	f2fs_bug_on(sbi, atomic_read(&dcc->discard_cmd_cnt));
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	return dropped;
 }
 
@@ -1747,9 +1889,13 @@ static int issue_discard_thread(void *data)
 			__wait_all_discard_cmd(sbi, &dpolicy);
 			wait_ms = dpolicy.min_interval;
 		} else if (issued == -1){
+<<<<<<< HEAD
 			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
 			if (!wait_ms)
 				wait_ms = dpolicy.mid_interval;
+=======
+			wait_ms = dpolicy.mid_interval;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		} else {
 			wait_ms = dpolicy.max_interval;
 		}
@@ -2174,12 +2320,21 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
 			del = 0;
 		}
 
+<<<<<<< HEAD
 		if (!f2fs_test_and_set_bit(offset, se->discard_map))
 			sbi->discard_blks--;
 
 		/* don't overwrite by SSR to keep node chain */
 		if (IS_NODESEG(se->type) &&
 				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
+=======
+		if (f2fs_discard_en(sbi) &&
+			!f2fs_test_and_set_bit(offset, se->discard_map))
+			sbi->discard_blks--;
+
+		/* don't overwrite by SSR to keep node chain */
+		if (IS_NODESEG(se->type)) {
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
 				se->ckpt_valid_blocks++;
 		}
@@ -2201,6 +2356,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
 			f2fs_bug_on(sbi, 1);
 			se->valid_blocks++;
 			del = 0;
+<<<<<<< HEAD
 		} else if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
 			/*
 			 * If checkpoints are off, we must not reuse data that
@@ -2213,6 +2369,12 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
 		}
 
 		if (f2fs_test_and_clear_bit(offset, se->discard_map))
+=======
+		}
+
+		if (f2fs_discard_en(sbi) &&
+			f2fs_test_and_clear_bit(offset, se->discard_map))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			sbi->discard_blks++;
 	}
 	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
@@ -2256,7 +2418,11 @@ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
 	struct seg_entry *se;
 	bool is_cp = false;
 
+<<<<<<< HEAD
 	if (!is_valid_data_blkaddr(sbi, blkaddr))
+=======
+	if (!is_valid_blkaddr(blkaddr))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		return true;
 
 	down_read(&sit_i->sentry_lock);
@@ -2320,7 +2486,11 @@ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
  */
 struct page *f2fs_get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
 {
+<<<<<<< HEAD
 	return f2fs_get_meta_page_nofail(sbi, GET_SUM_BLOCK(sbi, segno));
+=======
+	return f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
@@ -2492,9 +2662,12 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
 	if (sbi->segs_per_sec != 1)
 		return CURSEG_I(sbi, type)->segno;
 
+<<<<<<< HEAD
 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
 		return 0;
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	if (test_opt(sbi, NOHEAP) &&
 		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
 		return 0;
@@ -2592,7 +2765,10 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
 	__next_free_blkoff(sbi, curseg, 0);
 
 	sum_page = f2fs_get_sum_page(sbi, new_segno);
+<<<<<<< HEAD
 	f2fs_bug_on(sbi, IS_ERR(sum_page));
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
 	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
 	f2fs_put_page(sum_page, 1);
@@ -2717,7 +2893,11 @@ bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
 	return has_candidate;
 }
 
+<<<<<<< HEAD
 static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+=======
+static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 					struct discard_policy *dpolicy,
 					unsigned int start, unsigned int end)
 {
@@ -2727,15 +2907,22 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
 	struct discard_cmd *dc;
 	struct blk_plug plug;
 	int issued;
+<<<<<<< HEAD
 	unsigned int trimmed = 0;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 next:
 	issued = 0;
 
 	mutex_lock(&dcc->cmd_lock);
+<<<<<<< HEAD
 	if (unlikely(dcc->rbtree_check))
 		f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
 								&dcc->root));
+=======
+	f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi, &dcc->root));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
 					NULL, start,
@@ -2749,7 +2936,10 @@ next:
 
 	while (dc && dc->lstart <= end) {
 		struct rb_node *node;
+<<<<<<< HEAD
 		int err = 0;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 		if (dc->len < dpolicy->granularity)
 			goto skip;
@@ -2759,6 +2949,7 @@ next:
 			goto skip;
 		}
 
+<<<<<<< HEAD
 		err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
 
 		if (issued >= dpolicy->max_requests) {
@@ -2770,13 +2961,26 @@ next:
 			blk_finish_plug(&plug);
 			mutex_unlock(&dcc->cmd_lock);
 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+=======
+		__submit_discard_cmd(sbi, dpolicy, dc);
+
+		if (++issued >= dpolicy->max_requests) {
+			start = dc->lstart + dc->len;
+
+			blk_finish_plug(&plug);
+			mutex_unlock(&dcc->cmd_lock);
+			__wait_all_discard_cmd(sbi, NULL);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			congestion_wait(BLK_RW_ASYNC, HZ/50);
 			goto next;
 		}
 skip:
 		node = rb_next(&dc->rb_node);
+<<<<<<< HEAD
 		if (err)
 			__remove_discard_cmd(sbi, dc);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
 
 		if (fatal_signal_pending(current))
@@ -2785,8 +2989,11 @@ skip:
 
 	blk_finish_plug(&plug);
 	mutex_unlock(&dcc->cmd_lock);
+<<<<<<< HEAD
 
 	return trimmed;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
@@ -2804,8 +3011,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (end < MAIN_BLKADDR(sbi))
 		goto out;
+=======
+	if (end <= MAIN_BLKADDR(sbi))
+		return -EINVAL;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
 		f2fs_msg(sbi->sb, KERN_WARNING,
@@ -2817,10 +3029,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
 						GET_SEGNO(sbi, end);
+<<<<<<< HEAD
 	if (need_align) {
 		start_segno = rounddown(start_segno, sbi->segs_per_sec);
 		end_segno = roundup(end_segno + 1, sbi->segs_per_sec) - 1;
 	}
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	cpc.reason = CP_DISCARD;
 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
@@ -2836,6 +3051,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
 	if (err)
 		goto out;
 
+<<<<<<< HEAD
 	/*
 	 * We filed discard candidates, but actually we don't need to wait for
 	 * all of them, since they'll be issued in idle time along with runtime
@@ -2857,6 +3073,26 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
 out:
 	if (!err)
 		range->len = F2FS_BLK_TO_BYTES(trimmed);
+=======
+	start_block = START_BLOCK(sbi, start_segno);
+	end_block = START_BLOCK(sbi, end_segno + 1);
+
+	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
+	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
+
+	/*
+	 * We filed discard candidates, but actually we don't need to wait for
+	 * all of them, since they'll be issued in idle time along with runtime
+	 * discard option. User configuration looks like using runtime discard
+	 * or periodic fstrim instead of it.
+	 */
+	if (!test_opt(sbi, DISCARD)) {
+		trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
+					start_block, end_block);
+		range->len = F2FS_BLK_TO_BYTES(trimmed);
+	}
+out:
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	return err;
 }
 
@@ -3009,8 +3245,13 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
 			return CURSEG_COLD_DATA;
 		if (file_is_hot(inode) ||
 				is_inode_flag_set(inode, FI_HOT_DATA) ||
+<<<<<<< HEAD
 				f2fs_is_atomic_file(inode) ||
 				f2fs_is_volatile_file(inode))
+=======
+				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
+				is_inode_flag_set(inode, FI_VOLATILE_FILE))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			return CURSEG_HOT_DATA;
 		/* f2fs_rw_hint_to_seg_type(inode->i_write_hint); */
 		return CURSEG_WARM_DATA;
@@ -3192,7 +3433,10 @@ void f2fs_do_write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
 	ClearPageError(page);
 	f2fs_submit_page_write(&fio);
 
+<<<<<<< HEAD
 	stat_inc_meta_count(sbi, page->index);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	f2fs_update_iostat(sbi, io_type, F2FS_BLKSIZE);
 }
 
@@ -3213,7 +3457,12 @@ void f2fs_outplace_write_data(struct dnode_of_data *dn,
 	struct f2fs_summary sum;
 
 	f2fs_bug_on(sbi, dn->data_blkaddr == NULL_ADDR);
+<<<<<<< HEAD
 	set_summary(&sum, dn->nid, dn->ofs_in_node, fio->version);
+=======
+	f2fs_get_node_info(sbi, dn->nid, &ni);
+	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	do_write_page(&sum, fio);
 	f2fs_update_data_blkaddr(dn, fio->new_blkaddr);
 
@@ -3241,6 +3490,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
 	f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
 
 	return err;
+<<<<<<< HEAD
 }
 
 static inline int __f2fs_get_curseg(struct f2fs_sb_info *sbi,
@@ -3255,6 +3505,22 @@ static inline int __f2fs_get_curseg(struct f2fs_sb_info *sbi,
 	return i;
 }
 
+=======
+}
+
+static inline int __f2fs_get_curseg(struct f2fs_sb_info *sbi,
+						unsigned int segno)
+{
+	int i;
+
+	for (i = CURSEG_HOT_DATA; i < NO_CHECK_TYPE; i++) {
+		if (CURSEG_I(sbi, i)->segno == segno)
+			break;
+	}
+	return i;
+}
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
 				block_t old_blkaddr, block_t new_blkaddr,
 				bool recover_curseg, bool recover_newaddr)
@@ -3363,15 +3629,23 @@ void f2fs_wait_on_page_writeback(struct page *page,
 	}
 }
 
+<<<<<<< HEAD
 void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
+=======
+void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 {
 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 	struct page *cpage;
 
+<<<<<<< HEAD
 	if (!f2fs_post_read_required(inode))
 		return;
 
 	if (!is_valid_data_blkaddr(sbi, blkaddr))
+=======
+	if (!is_valid_blkaddr(blkaddr))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		return;
 
 	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
@@ -3381,6 +3655,7 @@ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
 	}
 }
 
+<<<<<<< HEAD
 void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
 								block_t len)
 {
@@ -3391,6 +3666,9 @@ void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
 }
 
 static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+=======
+static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 {
 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
 	struct curseg_info *seg_i;
@@ -3402,8 +3680,11 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
 	start = start_sum_block(sbi);
 
 	page = f2fs_get_meta_page(sbi, start++);
+<<<<<<< HEAD
 	if (IS_ERR(page))
 		return PTR_ERR(page);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	kaddr = (unsigned char *)page_address(page);
 
 	/* Step 1: restore nat cache */
@@ -3444,14 +3725,16 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
 			page = NULL;
 
 			page = f2fs_get_meta_page(sbi, start++);
+<<<<<<< HEAD
 			if (IS_ERR(page))
 				return PTR_ERR(page);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			kaddr = (unsigned char *)page_address(page);
 			offset = 0;
 		}
 	}
 	f2fs_put_page(page, 1);
-	return 0;
 }
 
 static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
@@ -3487,8 +3770,11 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
 	}
 
 	new = f2fs_get_meta_page(sbi, blk_addr);
+<<<<<<< HEAD
 	if (IS_ERR(new))
 		return PTR_ERR(new);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	sum = (struct f2fs_summary_block *)page_address(new);
 
 	if (IS_NODESEG(type)) {
@@ -3500,9 +3786,13 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
 				ns->ofs_in_node = 0;
 			}
 		} else {
+<<<<<<< HEAD
 			err = f2fs_restore_node_summary(sbi, segno, sum);
 			if (err)
 				goto out;
+=======
+			f2fs_restore_node_summary(sbi, segno, sum);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		}
 	}
 
@@ -3542,9 +3832,13 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
 							META_CP, true);
 
 		/* restore for compacted data summary */
+<<<<<<< HEAD
 		err = read_compacted_summaries(sbi);
 		if (err)
 			return err;
+=======
+		read_compacted_summaries(sbi);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		type = CURSEG_HOT_NODE;
 	}
 
@@ -3675,7 +3969,11 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
 static struct page *get_current_sit_page(struct f2fs_sb_info *sbi,
 					unsigned int segno)
 {
+<<<<<<< HEAD
 	return f2fs_get_meta_page_nofail(sbi, current_sit_addr(sbi, segno));
+=======
+	return f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
@@ -3947,11 +4245,21 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
 			return -ENOMEM;
 #endif
 
+<<<<<<< HEAD
 		sit_i->sentries[start].discard_map
 			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
 							GFP_KERNEL);
 		if (!sit_i->sentries[start].discard_map)
 			return -ENOMEM;
+=======
+		if (f2fs_discard_en(sbi)) {
+			sit_i->sentries[start].discard_map
+				= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
+								GFP_KERNEL);
+			if (!sit_i->sentries[start].discard_map)
+				return -ENOMEM;
+		}
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	}
 
 	sit_i->tmp_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
@@ -4148,6 +4456,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
 		if (IS_NODESEG(se->type))
 			total_node_blocks += se->valid_blocks;
 
+<<<<<<< HEAD
 		if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
 			memset(se->discard_map, 0xff, SIT_VBLOCK_MAP_SIZE);
 		} else {
@@ -4155,6 +4464,18 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
 						SIT_VBLOCK_MAP_SIZE);
 			sbi->discard_blks += old_valid_blocks;
 			sbi->discard_blks -= se->valid_blocks;
+=======
+		if (f2fs_discard_en(sbi)) {
+			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+				memset(se->discard_map, 0xff,
+							SIT_VBLOCK_MAP_SIZE);
+			} else {
+				memcpy(se->discard_map, se->cur_valid_map,
+							SIT_VBLOCK_MAP_SIZE);
+				sbi->discard_blks += old_valid_blocks;
+				sbi->discard_blks -= se->valid_blocks;
+			}
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		}
 
 		if (sbi->segs_per_sec > 1) {

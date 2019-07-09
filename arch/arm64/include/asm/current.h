@@ -10,6 +10,7 @@
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 struct task_struct;
 
+<<<<<<< HEAD
 /*
  * We don't use read_sysreg() as we want the compiler to cache the value where
  * possible.
@@ -21,6 +22,11 @@ static __always_inline struct task_struct *get_current(void)
 	asm ("mrs %0, sp_el0" : "=r" (sp_el0));
 
 	return (struct task_struct *)sp_el0;
+=======
+static __always_inline struct task_struct *get_current(void)
+{
+	return (struct task_struct *)read_sysreg(sp_el0);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 #define current get_current()
 #else

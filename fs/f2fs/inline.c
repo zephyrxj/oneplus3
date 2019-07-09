@@ -316,7 +316,11 @@ process_inline:
 		clear_inode_flag(inode, FI_INLINE_DATA);
 		f2fs_put_page(ipage, 1);
 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+<<<<<<< HEAD
 		if (f2fs_truncate_blocks(inode, 0, false, false))
+=======
+		if (f2fs_truncate_blocks(inode, 0, false))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			return false;
 		goto process_inline;
 	}
@@ -488,7 +492,11 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
 	return 0;
 punch_dentry_pages:
 	truncate_inode_pages(&dir->i_data, 0);
+<<<<<<< HEAD
 	f2fs_truncate_blocks(dir, 0, false, false);
+=======
+	f2fs_truncate_blocks(dir, 0, false);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	f2fs_remove_dirty_inode(dir);
 	return err;
 }
@@ -523,7 +531,10 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
 	return 0;
 recover:
 	lock_page(ipage);
+<<<<<<< HEAD
 	f2fs_wait_on_page_writeback(ipage, NODE, true);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA(dir));
 	f2fs_i_depth_write(dir, 0);
 	f2fs_i_size_write(dir, MAX_INLINE_DATA(dir));
@@ -715,10 +726,14 @@ int f2fs_inline_data_fiemap(struct inode *inode,
 		ilen = start + len;
 	ilen -= start;
 
+<<<<<<< HEAD
 	err = f2fs_get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
 	if (err)
 		goto out;
 
+=======
+	f2fs_get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	byteaddr = (__u64)ni.blk_addr << inode->i_sb->s_blocksize_bits;
 	byteaddr += (char *)inline_data_addr(inode, ipage) -
 					(char *)F2FS_INODE(ipage);

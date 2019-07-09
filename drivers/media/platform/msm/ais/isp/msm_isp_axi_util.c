@@ -2813,6 +2813,10 @@ static int msm_isp_start_axi_stream(struct vfe_device *vfe_dev,
 		vfe_dev->axi_data.src_info[VFE_PIX_0].frame_id = 0;
 		vfe_dev->axi_data.src_info[VFE_PIX_0].eof_id = 0;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	mutex_lock(&vfe_dev->buf_mgr->lock);
 	for (i = 0; i < stream_cfg_cmd->num_streams; i++) {
 		if (HANDLE_TO_IDX(stream_cfg_cmd->stream_handle[i]) >=

@@ -19,6 +19,12 @@
 
 #include <linux/types.h>
 
+<<<<<<< HEAD
+=======
+/* simplify initialization of mask field */
+#define CYCLECOUNTER_MASK(bits) (cycle_t)((bits) < 64 ? ((1ULL<<(bits))-1) : -1)
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 /**
  * struct cyclecounter - hardware abstraction for a free running counter
  *	Provides completely state-free accessors to the underlying hardware.
@@ -29,7 +35,11 @@
  * @read:		returns the current cycle value
  * @mask:		bitmask for two's complement
  *			subtraction of non 64 bit counters,
+<<<<<<< HEAD
  *			see CLOCKSOURCE_MASK() helper macro
+=======
+ *			see CYCLECOUNTER_MASK() helper macro
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
  * @mult:		cycle to nanosecond multiplier
  * @shift:		cycle to nanosecond divisor (power of two)
  */

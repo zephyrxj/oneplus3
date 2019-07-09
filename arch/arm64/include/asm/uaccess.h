@@ -145,10 +145,17 @@ static inline void __uaccess_ttbr0_disable(void)
 	ttbr &= ~TTBR_ASID_MASK;
 	/* reserved_ttbr0 placed at the end of swapper_pg_dir */
 	write_sysreg(ttbr + SWAPPER_DIR_SIZE, ttbr0_el1);
+<<<<<<< HEAD
 	isb();
 	/* Set reserved ASID */
 	write_sysreg(ttbr, ttbr1_el1);
 	isb();
+=======
+	isb();
+	/* Set reserved ASID */
+	write_sysreg(ttbr, ttbr1_el1);
+	isb();
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	local_irq_restore(flags);
 }
 

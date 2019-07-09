@@ -37,8 +37,13 @@ static struct msm_gem_submit *submit_create(struct drm_device *dev,
 		struct msm_gpu *gpu, uint32_t nr_cmds, uint32_t nr_bos)
 {
 	struct msm_gem_submit *submit;
+<<<<<<< HEAD
 	uint64_t sz = sizeof(*submit) + ((u64)nr_bos * sizeof(submit->bos[0])) +
 		((u64)nr_cmds * sizeof(submit->cmd[0]));
+=======
+	uint64_t sz = sizeof(*submit) + (nr_bos * sizeof(submit->bos[0])) +
+		(nr_cmds * sizeof(submit->cmd[0]));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	if (sz > SIZE_MAX)
 		return NULL;

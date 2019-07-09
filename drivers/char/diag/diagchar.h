@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2008-2018, The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2008-2019, The Linux Foundation. All rights reserved.
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -25,6 +29,8 @@
 #include <soc/qcom/smd.h>
 #include <asm/atomic.h>
 #include "diagfwd_bridge.h"
+
+#define THRESHOLD_CLIENT_LIMIT	50
 
 /* Size of the USB buffers used for read and write*/
 #define USB_MAX_OUT_BUF 4096
@@ -402,6 +408,11 @@ struct diag_logging_mode_param_t {
 	uint8_t mode_param;
 } __packed;
 
+struct diag_con_all_param_t {
+	uint32_t diag_con_all;
+	uint32_t num_peripherals;
+};
+
 struct diag_md_session_t {
 	int pid;
 	int peripheral_mask;
@@ -464,14 +475,13 @@ struct diagchar_dev {
 	struct class *diagchar_class;
 	struct device *diag_dev;
 	int ref_count;
-	int mask_clear;
-	struct mutex diag_maskclear_mutex;
 	struct mutex diag_notifier_mutex;
 	struct mutex diagchar_mutex;
 	struct mutex diag_file_mutex;
 	wait_queue_head_t wait_q;
 	struct diag_client_map *client_map;
 	int *data_ready;
+	atomic_t data_ready_notif[THRESHOLD_CLIENT_LIMIT];
 	int num_clients;
 	int polling_reg_flag;
 	int use_device_tree;

@@ -426,9 +426,13 @@ static inline void tk_update_ktime_data(struct timekeeper *tk)
 	tk->tkr_mono.base = ns_to_ktime(nsec);
 
 	/* Update the monotonic raw base */
+<<<<<<< HEAD
 	seconds = tk->raw_sec;
 	nsec = (u32)(tk->tkr_raw.xtime_nsec >> tk->tkr_raw.shift);
 	tk->tkr_raw.base = ns_to_ktime(seconds * NSEC_PER_SEC + nsec);
+=======
+	tk->tkr_raw.base = ns_to_ktime(tk->raw_sec * NSEC_PER_SEC);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 
 /* must hold timekeeper_lock */
@@ -914,13 +918,23 @@ void getrawmonotonic(struct timespec *ts)
 
 	do {
 		seq = read_seqcount_begin(&tk_core.seq);
+<<<<<<< HEAD
 		ts->tv_sec = tk->raw_sec;
+=======
+		ts64.tv_sec = tk->raw_sec;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		nsecs = timekeeping_get_ns(&tk->tkr_raw);
 
 	} while (read_seqcount_retry(&tk_core.seq, seq));
 
+<<<<<<< HEAD
 	ts->tv_nsec = 0;
 	timespec_add_ns(ts, nsecs);
+=======
+	ts64.tv_nsec = 0;
+	timespec64_add_ns(&ts64, nsecs);
+	*ts = timespec64_to_timespec(ts64);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 }
 EXPORT_SYMBOL(getrawmonotonic);
 

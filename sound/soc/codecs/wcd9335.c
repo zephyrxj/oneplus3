@@ -108,7 +108,7 @@
 /* Convert from vout ctl to micbias voltage in mV */
 #define WCD_VOUT_CTL_TO_MICB(v) (1000 + v * 50)
 
-#define TASHA_ZDET_NUM_MEASUREMENTS 150
+#define TASHA_ZDET_NUM_MEASUREMENTS 900
 #define TASHA_MBHC_GET_C1(c)  ((c & 0xC000) >> 14)
 #define TASHA_MBHC_GET_X1(x)  (x & 0x3FFF)
 /* z value compared in milliOhm */
@@ -851,6 +851,7 @@ static const struct tasha_reg_mask_val tasha_spkr_mode1[] = {
 	{WCD9335_CDC_BOOST1_BOOST_CTL, 0x7C, 0x44},
 };
 
+<<<<<<< HEAD
 enum
 {
 	NO_DEVICE	= 0,
@@ -880,6 +881,8 @@ static ssize_t wcd9xxx_print_name(struct switch_dev *sdev, char *buf)
 	return -EINVAL;
 }
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 static const struct tasha_reg_mask_val tasha_high_impedance[] = {
 	{WCD9335_TLMM_I2S_TX_SD0_PINCFG, 0x1F, 0x0C},
 	{WCD9335_TLMM_I2S_TX_SD1_PINCFG, 0x1F, 0x0C},
@@ -4039,19 +4042,13 @@ static void tasha_codec_bridge_mclk_enable(struct snd_soc_codec *codec,
 		 */
 		snd_soc_update_bits(codec,
 				    WCD9335_DATA_HUB_DATA_HUB_I2S_CLK,
-				    0x02, 0x02);
-		snd_soc_update_bits(codec,
-				    WCD9335_DATA_HUB_DATA_HUB_I2S_CLK,
-				    0x1, 0x0);
+				    0x03, 0x02);
 	} else {
 		snd_soc_update_bits(codec,
 				    WCD9335_DATA_HUB_DATA_HUB_I2S_CLK,
-				    0x02, 0x00);
-		snd_soc_update_bits(codec,
-				    WCD9335_DATA_HUB_DATA_HUB_I2S_CLK,
-				    0x1, 0x1);
-	};
-};
+				    0x03, 0x01);
+	}
+}
 
 static int tasha_codec_bridge_tx_mclk_supply(struct snd_soc_dapm_widget *w,
 					   struct snd_kcontrol *kcontrol,
@@ -11870,6 +11867,12 @@ static int tasha_hw_params(struct snd_pcm_substream *substream,
 			snd_soc_update_bits(codec,
 					WCD9335_DATA_HUB_DATA_HUB_RX_I2S_CTL,
 					0x1c, (rx_fs_rate << 2));
+			snd_soc_update_bits(codec,
+					WCD9335_DATA_HUB_DATA_HUB_TX_I2S_CTL,
+					0x20, i2s_bit_mode << 5);
+			snd_soc_update_bits(codec,
+					WCD9335_DATA_HUB_DATA_HUB_TX_I2S_CTL,
+					0x1c, (rx_fs_rate << 2));
 		}
 		break;
 	case SNDRV_PCM_STREAM_CAPTURE:
@@ -11988,13 +11991,19 @@ static int tasha_hw_params(struct snd_pcm_substream *substream,
 			snd_soc_update_bits(dai->codec,
 					WCD9335_DATA_HUB_DATA_HUB_TX_I2S_CTL,
 					0x1C, (tx_fs_rate << 2));
-		};
+			snd_soc_update_bits(codec,
+					WCD9335_DATA_HUB_DATA_HUB_RX_I2S_CTL,
+					0x20, i2s_bit_mode << 5);
+			snd_soc_update_bits(dai->codec,
+					WCD9335_DATA_HUB_DATA_HUB_RX_I2S_CTL,
+					0x1C, (tx_fs_rate << 2));
+		}
 		break;
 	default:
 		pr_err("%s: Invalid stream type %d\n", __func__,
 			substream->stream);
 		return -EINVAL;
-	};
+	}
 	if (dai->id == AIF4_VIFEED)
 		tasha->dai[dai->id].bit_width = 32;
 
@@ -14190,9 +14199,12 @@ static int tasha_codec_probe(struct snd_soc_codec *codec)
 	mutex_unlock(&codec->mutex);
 	snd_soc_dapm_sync(dapm);
 
+<<<<<<< HEAD
 
    priv_headset_type = tasha;
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	if (pdata->wcd9xxx_mic_tristate)
 		tasha_set_high_impedance_mode(codec);
 

@@ -4433,7 +4433,13 @@ static int dvb_demux_do_ioctl(struct file *file,
 		break;
 
 	default:
+<<<<<<< HEAD
 		ret = -ENOTTY;
+=======
+		pr_err("%s: unknown ioctl code (0x%x)\n",
+			__func__, cmd);
+		ret = -ENOIOCTLCMD;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		break;
 	}
 	mutex_unlock(&dmxdev->mutex);

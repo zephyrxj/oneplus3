@@ -95,9 +95,20 @@ repeat:
 		goto repeat;
 	}
 
+<<<<<<< HEAD
 	if (unlikely(!PageUptodate(page))) {
 		f2fs_put_page(page, 1);
 		return ERR_PTR(-EIO);
+=======
+	/*
+	 * if there is any IO error when accessing device, make our filesystem
+	 * readonly and make sure do not write checkpoint with non-uptodate
+	 * meta page.
+	 */
+	if (unlikely(!PageUptodate(page))) {
+		memset(page_address(page), 0, PAGE_SIZE);
+		f2fs_stop_checkpoint(sbi, false);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	}
 out:
 	mark_page_accessed(page);
@@ -131,7 +142,11 @@ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
 	return __get_meta_page(sbi, index, false);
 }
 
+<<<<<<< HEAD
 bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+=======
+bool f2fs_is_valid_meta_blkaddr(struct f2fs_sb_info *sbi,
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 					block_t blkaddr, int type)
 {
 	switch (type) {
@@ -200,7 +215,11 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
 	blk_start_plug(&plug);
 	for (; nrpages-- > 0; blkno++) {
 
+<<<<<<< HEAD
 		if (!f2fs_is_valid_blkaddr(sbi, blkno, type))
+=======
+		if (!f2fs_is_valid_meta_blkaddr(sbi, blkno, type))
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 			goto out;
 
 		switch (type) {
@@ -266,8 +285,16 @@ static int __f2fs_write_meta_page(struct page *page,
 
 	trace_f2fs_writepage(page, META);
 
+<<<<<<< HEAD
 	if (unlikely(f2fs_cp_error(sbi)))
 		goto redirty_out;
+=======
+	if (unlikely(f2fs_cp_error(sbi))) {
+		dec_page_count(sbi, F2FS_DIRTY_META);
+		unlock_page(page);
+		return 0;
+	}
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
 		goto redirty_out;
 	if (wbc->for_reclaim && page->index < GET_SUM_BLOCK(sbi, 0))
@@ -405,7 +432,7 @@ static int f2fs_set_meta_page_dirty(struct page *page)
 	if (!PageUptodate(page))
 		SetPageUptodate(page);
 	if (!PageDirty(page)) {
-		f2fs_set_page_dirty_nobuffers(page);
+		__set_page_dirty_nobuffers(page);
 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
 		SetPagePrivate(page);
 		f2fs_trace_pid(page);
@@ -591,7 +618,16 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 {
 	struct inode *inode;
 	struct node_info ni;
+<<<<<<< HEAD
 	int err;
+=======
+	int err = f2fs_acquire_orphan_inode(sbi);
+
+	if (err)
+		goto err_out;
+
+	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	inode = f2fs_iget_retry(sbi->sb, ino);
 	if (IS_ERR(inode)) {
@@ -609,9 +645,13 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 	/* truncate all the data during iput */
 	iput(inode);
 
+<<<<<<< HEAD
 	err = f2fs_get_node_info(sbi, ino, &ni);
 	if (err)
 		goto err_out;
+=======
+	f2fs_get_node_info(sbi, ino, &ni);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	/* ENOMEM was fully retried in f2fs_evict_inode. */
 	if (ni.blk_addr != NULL_ADDR) {
@@ -649,10 +689,14 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
 	/* Needed for iput() to work correctly and not trash data */
 	sbi->sb->s_flags |= MS_ACTIVE;
 
+<<<<<<< HEAD
 	/*
 	 * Turn on quotas which were not enabled for read-only mounts if
 	 * filesystem has quota feature, so that they are updated correctly.
 	 */
+=======
+	/* Turn on quotas so that they are updated correctly */
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & MS_RDONLY);
 #endif
 
@@ -662,7 +706,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
 	f2fs_ra_meta_pages(sbi, start_blk, orphan_blocks, META_CP, true);
 
 	for (i = 0; i < orphan_blocks; i++) {
+<<<<<<< HEAD
 		struct page *page;
+=======
+		struct page *page = f2fs_get_meta_page(sbi, start_blk + i);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		struct f2fs_orphan_block *orphan_blk;
 
 		page = f2fs_get_meta_page(sbi, start_blk + i);
@@ -685,8 +733,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
 	/* clear Orphan Flag */
 	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
 out:
+<<<<<<< HEAD
 	set_sbi_flag(sbi, SBI_IS_RECOVERED);
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 #ifdef CONFIG_QUOTA
 	/* Turn quotas off */
 	if (quota_enabled)
@@ -763,9 +814,12 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
 	__u32 crc = 0;
 
 	*cp_page = f2fs_get_meta_page(sbi, cp_addr);
+<<<<<<< HEAD
 	if (IS_ERR(*cp_page))
 		return PTR_ERR(*cp_page);
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
 
 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
@@ -871,6 +925,13 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
 	cp_block = (struct f2fs_checkpoint *)page_address(cur_page);
 	memcpy(sbi->ckpt, cp_block, blk_size);
 
+<<<<<<< HEAD
+=======
+	/* Sanity checking of checkpoint */
+	if (f2fs_sanity_check_ckpt(sbi))
+		goto free_fail_no_cp;
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	if (cur_page == cp1)
 		sbi->cur_cp_pack = 1;
 	else
@@ -892,8 +953,11 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
 
 		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
+<<<<<<< HEAD
 		if (IS_ERR(cur_page))
 			goto free_fail_no_cp;
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 		sit_bitmap_ptr = page_address(cur_page);
 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
 		f2fs_put_page(cur_page, 1);
@@ -1296,12 +1360,17 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
 
 	/* writeout cp pack 2 page */
 	err = __f2fs_write_meta_page(page, &wbc, FS_CP_META_IO);
+<<<<<<< HEAD
 	if (unlikely(err && f2fs_cp_error(sbi))) {
 		f2fs_put_page(page, 1);
 		return;
 	}
 
 	f2fs_bug_on(sbi, err);
+=======
+	f2fs_bug_on(sbi, err);
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	f2fs_put_page(page, 0);
 
 	/* submit checkpoint (with barrier if NOBARRIER is not set) */
@@ -1444,6 +1513,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 
 	/* Here, we have one bio having CP pack except cp pack 2 page */
 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+<<<<<<< HEAD
 
 	/* wait for previous submitted meta pages writeback */
 	f2fs_wait_on_all_pages_writeback(sbi);
@@ -1452,6 +1522,25 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 	err = f2fs_flush_device_cache(sbi);
 	if (err)
 		return err;
+=======
+
+	/* wait for previous submitted meta pages writeback */
+	wait_on_all_pages_writeback(sbi);
+
+	if (unlikely(f2fs_cp_error(sbi)))
+		return -EIO;
+
+	/* flush all device cache */
+	err = f2fs_flush_device_cache(sbi);
+	if (err)
+		return err;
+
+	/* barrier and flush checkpoint cp pack 2 page if it can */
+	commit_checkpoint(sbi, ckpt, start_blk);
+	wait_on_all_pages_writeback(sbi);
+
+	f2fs_release_ino_entry(sbi, false);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	/* barrier and flush checkpoint cp pack 2 page if it can */
 	commit_checkpoint(sbi, ckpt, start_blk);
@@ -1554,10 +1643,14 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
 
 	/* write cached NAT/SIT entries to NAT/SIT area */
+<<<<<<< HEAD
 	err = f2fs_flush_nat_entries(sbi, cpc);
 	if (err)
 		goto stop;
 
+=======
+	f2fs_flush_nat_entries(sbi, cpc);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	f2fs_flush_sit_entries(sbi, cpc);
 
 	/* unlock all the fs_lock[] in do_checkpoint() */
@@ -1566,7 +1659,11 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 		f2fs_release_discard_addrs(sbi);
 	else
 		f2fs_clear_prefree_segments(sbi, cpc);
+<<<<<<< HEAD
 stop:
+=======
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	unblock_operations(sbi);
 	stat_inc_cp_count(sbi->stat_info);
 

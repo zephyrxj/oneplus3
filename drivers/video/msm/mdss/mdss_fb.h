@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2008-2017, The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2008-2018, The Linux Foundation. All rights reserved.
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -235,6 +239,10 @@ struct msm_mdp_interface {
 	int (*pp_release_fnc)(struct msm_fb_data_type *mfd);
 	void (*signal_retire_fence)(struct msm_fb_data_type *mfd,
 					int retire_cnt);
+<<<<<<< HEAD
+=======
+	bool (*is_twm_en)(void);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	void *private1;
 };
 

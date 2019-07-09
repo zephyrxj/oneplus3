@@ -1625,6 +1625,13 @@ static int msm_isp_update_deliver_count(struct vfe_device *vfe_dev,
 			goto done;
 		}
 		temp_stream_info->sw_ping_pong_bit ^= 1;
+		if (temp_stream_info->undelivered_request_cnt == 0) {
+			temp_stream_info->current_framedrop_period =
+				MSM_VFE_STREAM_STOP_PERIOD;
+			temp_stream_info->activated_framedrop_period =
+				MSM_VFE_STREAM_STOP_PERIOD;
+			msm_isp_cfg_framedrop_reg(vfe_dev, temp_stream_info);
+		}
 	}
 done:
 	return rc;
@@ -2241,6 +2248,10 @@ static void msm_isp_get_camif_update_state_and_halt(
 	cur_pix_stream_cnt =
 		axi_data->src_info[VFE_PIX_0].pix_stream_count +
 		axi_data->src_info[VFE_PIX_0].raw_stream_count;
+
+	if (stream_cfg_cmd->num_streams > VFE_AXI_SRC_MAX)
+		return;
+
 	for (i = 0; i < stream_cfg_cmd->num_streams; i++) {
 		stream_info =
 			&axi_data->stream_info[
@@ -2984,7 +2995,11 @@ static int msm_isp_start_axi_stream(struct vfe_device *vfe_dev,
 		}
 	}
 	mutex_unlock(&vfe_dev->buf_mgr->lock);
+<<<<<<< HEAD
 	msm_isp_update_stream_bandwidth(vfe_dev);
+=======
+	msm_isp_update_stream_bandwidth(vfe_dev, stream_cfg_cmd->hw_state);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	vfe_dev->hw_info->vfe_ops.axi_ops.reload_wm(vfe_dev,
 		vfe_dev->vfe_base, wm_reload_mask);
 	msm_isp_update_camif_output_count(vfe_dev, stream_cfg_cmd);

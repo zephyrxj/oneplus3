@@ -21,6 +21,7 @@
 	qcom,msm-id = <265 2>;
 	qcom,board-id= <0x00010120 0>;
 };
+<<<<<<< HEAD
 
 &blsp1_uart2_hs {
 	status = "okay";
@@ -32,3 +33,5 @@
 		status = "disabled";
 	};
 };
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085

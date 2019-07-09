@@ -121,8 +121,11 @@ struct spi_miso { /* TLV for MISO line */
 #define CMD_END_BOOT_ROM_UPGRADE	0x9B
 #define CMD_END_FW_UPDATE_FILE		0x9C
 #define CMD_UPDATE_TIME_INFO		0x9D
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 #define CMD_SUSPEND_EVENT		0x9E
 #define CMD_RESUME_EVENT		0x9F
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 
 #define IOCTL_RELEASE_CAN_BUFFER	(SIOCDEVPRIVATE + 0)
 #define IOCTL_ENABLE_BUFFERING		(SIOCDEVPRIVATE + 1)
@@ -182,12 +185,21 @@ struct can_config_bit_timing {
 	u32 phase_seg2;
 	u32 sjw;
 	u32 brp;
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 } __packed;
 
 struct can_time_info {
 	u64 time;
 } __packed;
 
+=======
+} __packed;
+
+struct can_time_info {
+	u64 time;
+} __packed;
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 static struct can_bittiming_const rh850_bittiming_const = {
 	.name = "qti_can",
 	.tseg1_min = 1,
@@ -570,6 +582,7 @@ static int qti_can_query_firmware_version(struct qti_can *priv_data)
 	reinit_completion(&priv_data->response_completion);
 
 	ret = qti_can_do_spi_transaction(priv_data);
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 	mutex_unlock(&priv_data->spi_lock);
 
 	if (ret == 0) {
@@ -601,7 +614,16 @@ static int qti_can_notify_power_events(struct qti_can *priv_data, u8 event_type)
 	req->seq = atomic_inc_return(&priv_data->msg_seq);
 
 	ret = qti_can_do_spi_transaction(priv_data);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 	mutex_unlock(&priv_data->spi_lock);
+
+	if (ret == 0) {
+		wait_for_completion_interruptible_timeout(
+				&priv_data->response_completion,
+				msecs_to_jiffies(QUERY_FIRMWARE_TIMEOUT_MS));
+		ret = priv_data->cmd_result;
+	}
 
 	return ret;
 }
@@ -1303,6 +1325,7 @@ static int qti_can_probe(struct spi_device *spi)
 	priv_data = qti_can_create_priv_data(spi);
 	if (!priv_data) {
 		dev_err(dev, "Failed to create qti_can priv_data\n");
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 		err = -ENOMEM;
 		return err;
 	}
@@ -1381,6 +1404,86 @@ static int qti_can_probe(struct spi_device *spi)
 		err = -ENOMEM;
 		return err;
 	}
+=======
+		err = -ENOMEM;
+		return err;
+	}
+	dev_info(dev, "qti_can_probe created priv_data");
+
+	err = of_property_read_u32(spi->dev.of_node, "qcom,clk-freq-mhz",
+				   &priv_data->clk_freq_mhz);
+	if (err) {
+		LOGDE("DT property: qcom,clk-freq-hz not defined\n");
+		return err;
+	}
+
+	err = of_property_read_u32(spi->dev.of_node, "qcom,max-can-channels",
+				   &priv_data->max_can_channels);
+	if (err) {
+		LOGDE("DT property: qcom,max-can-channels not defined\n");
+		return err;
+	}
+
+	err = of_property_read_u32(spi->dev.of_node, "qcom,bits-per-word",
+				   &priv_data->bits_per_word);
+	if (err)
+		priv_data->bits_per_word = 16;
+
+	err = of_property_read_u32(spi->dev.of_node, "qcom,reset-delay-msec",
+				   &priv_data->reset_delay_msec);
+	if (err)
+		priv_data->reset_delay_msec = 1;
+
+	priv_data->can_fw_cmd_timeout_req =
+			of_property_read_bool(spi->dev.of_node,
+					      "qcom,can-fw-cmd-timeout-req");
+
+	err = of_property_read_u32(spi->dev.of_node,
+				   "qcom,can-fw-cmd-timeout-ms",
+					&priv_data->can_fw_cmd_timeout_ms);
+	if (err)
+		priv_data->can_fw_cmd_timeout_ms = 0;
+
+	err = of_property_read_u32(spi->dev.of_node,
+				   "qcom,rem-all-buffering-timeout-ms",
+				   &priv_data->rem_all_buffering_timeout_ms);
+	if (err)
+		priv_data->rem_all_buffering_timeout_ms = 0;
+
+	priv_data->reset = of_get_named_gpio(spi->dev.of_node,
+				"qcom,reset-gpio", 0);
+
+	if (gpio_is_valid(priv_data->reset)) {
+		err = gpio_request(priv_data->reset, "qti-can-reset");
+		if (err < 0) {
+			LOGDE("failed to request gpio %d: %d\n",
+			      priv_data->reset, err);
+			return err;
+		}
+
+		gpio_direction_output(priv_data->reset, 0);
+		udelay(1);
+		gpio_direction_output(priv_data->reset, 1);
+		msleep(priv_data->reset_delay_msec);
+	}
+
+	priv_data->support_can_fd = of_property_read_bool(spi->dev.of_node,
+							  "qcom,support-can-fd");
+
+	if (of_device_is_compatible(spi->dev.of_node, "qcom,nxp,mpc5746c"))
+		qti_can_bittiming_const = flexcan_bittiming_const;
+	else if (of_device_is_compatible(spi->dev.of_node,
+					 "qcom,renesas,rh850"))
+		qti_can_bittiming_const = rh850_bittiming_const;
+
+	priv_data->netdev = kzalloc(sizeof(priv_data->netdev[0]) *
+					   priv_data->max_can_channels,
+					   GFP_KERNEL);
+	if (!priv_data->netdev) {
+		err = -ENOMEM;
+		return err;
+	}
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 
 	for (i = 0; i < priv_data->max_can_channels; i++) {
 		err = qti_can_create_netdev(spi, priv_data, i);
@@ -1466,10 +1569,13 @@ static int qti_can_remove(struct spi_device *spi)
 static int qti_can_suspend(struct device *dev)
 {
 	struct spi_device *spi = to_spi_device(dev);
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 	struct qti_can *priv_data = spi_get_drvdata(spi);
 	u8 power_event = CMD_SUSPEND_EVENT;
 
 	qti_can_notify_power_events(priv_data, power_event);
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 
 	enable_irq_wake(spi->irq);
 	return 0;
@@ -1479,10 +1585,16 @@ static int qti_can_resume(struct device *dev)
 {
 	struct spi_device *spi = to_spi_device(dev);
 	struct qti_can *priv_data = spi_get_drvdata(spi);
+<<<<<<< HEAD:drivers/net/can/spi/qti-can.c
 	u8 power_event = CMD_RESUME_EVENT;
 
 	disable_irq_wake(spi->irq);
 	qti_can_notify_power_events(priv_data, power_event);
+=======
+
+	disable_irq_wake(spi->irq);
+	qti_can_rx_message(priv_data);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085:drivers/net/can/spi/qti-can.c
 	return 0;
 }
 

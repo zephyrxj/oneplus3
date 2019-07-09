@@ -44,6 +44,7 @@ int main(void)
   DEFINE(TI_FLAGS,		offsetof(struct thread_info, flags));
   DEFINE(TI_PREEMPT,		offsetof(struct thread_info, preempt_count));
   DEFINE(TI_ADDR_LIMIT,		offsetof(struct thread_info, addr_limit));
+<<<<<<< HEAD
 #endif
 #ifndef CONFIG_THREAD_INFO_IN_TASK
   DEFINE(TI_TASK,		offsetof(struct thread_info, task));
@@ -51,6 +52,9 @@ int main(void)
   DEFINE(TI_EXEC_DOMAIN,	offsetof(struct thread_info, exec_domain));
 #ifndef CONFIG_THREAD_INFO_IN_TASK
   DEFINE(TI_CPU,		offsetof(struct thread_info, cpu));
+=======
+  DEFINE(TI_EXEC_DOMAIN,	offsetof(struct thread_info, exec_domain));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 #endif
 #ifdef CONFIG_ARM64_SW_TTBR0_PAN
   DEFINE(TSK_TI_TTBR0,		offsetof(struct thread_info, ttbr0));
@@ -107,6 +111,13 @@ int main(void)
   DEFINE(CPU_BOOT_STACK,	offsetof(struct secondary_data, stack));
   DEFINE(CPU_BOOT_TASK,		offsetof(struct secondary_data, task));
   BLANK();
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_THREAD_INFO_IN_TASK
+  DEFINE(CPU_BOOT_STACK,	offsetof(struct secondary_data, stack));
+  DEFINE(CPU_BOOT_TASK,		offsetof(struct secondary_data, task));
+  BLANK();
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 #endif
 #ifdef CONFIG_KVM_ARM_HOST
   DEFINE(VCPU_CONTEXT,		offsetof(struct kvm_vcpu, arch.ctxt));

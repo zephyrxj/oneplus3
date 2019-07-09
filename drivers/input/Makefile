@@ -28,3 +28,7 @@ obj-$(CONFIG_INPUT_APMPOWER)	+= apm-power.o
 obj-$(CONFIG_INPUT_KEYRESET)	+= keyreset.o
 obj-$(CONFIG_INPUT_KEYCOMBO)	+= keycombo.o
 obj-$(CONFIG_SENSORS_HALL)	+= hall_sensor.o
+<<<<<<< HEAD
+=======
+obj-y	+= sensors/smi130/
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085

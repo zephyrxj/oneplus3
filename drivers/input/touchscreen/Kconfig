@@ -1136,6 +1136,7 @@ config TOUCHSCREEN_MAXIM_STI
 	  module will be called maxim_sti.
 
 source "drivers/input/touchscreen/gt9xx/Kconfig"
+<<<<<<< HEAD
 config TOUCHSCREEN_SYNAPTICS_S3508_I2C_RMI
        tristate "Synaptics s3508 i2c touchscreen"
        depends on I2C
@@ -1156,6 +1157,9 @@ config SWEEP2SLEEP
         default n
         help
           Say Y here to support sweep2sleep
+=======
+source "drivers/input/touchscreen/focaltech_touch/Kconfig"
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 config TOUCHSCREEN_HIMAX_CHIPSET
 	bool "Himax touchpanel CHIPSET"

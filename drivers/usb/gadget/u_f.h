@@ -47,6 +47,7 @@
 struct usb_ep;
 struct usb_request;
 
+<<<<<<< HEAD
 /**
  * alloc_ep_req - returns a usb_request allocated by the gadget driver and
  * allocates the request's buffer.
@@ -64,6 +65,11 @@ struct usb_request *alloc_ep_req(struct usb_ep *ep, size_t len, int default_len)
 
 /* Requests allocated via alloc_ep_req() must be freed by free_ep_req(). */
 static inline void free_ep_req(struct usb_ep *ep, struct usb_request *req)
+=======
+/* Requests allocated via alloc_ep_req() must be freed by free_ep_req(). */
+struct usb_request *alloc_ep_req(struct usb_ep *ep, int len, int default_len);
+static inline void  free_ep_req(struct usb_ep *ep, struct usb_request *req)
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 {
 	kfree(req->buf);
 	usb_ep_free_request(ep, req);

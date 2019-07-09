@@ -201,6 +201,11 @@ xlnx	Xilinx
 zyxel	ZyXEL Communications Corp.
 zarlink	Zarlink Semiconductor
 bosch-sensortec»    Bosch Sensortec GmbH
+inven   InvenSense, Inc.
 lontium Lontium Semiconductor
 himax	Himax Technologies, Inc.
+<<<<<<< HEAD
 hxcommon	Himax Technologies, Inc.
+=======
+hxcommon	Himax Technologies, Inc.
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085

@@ -360,6 +360,8 @@ static ssize_t ipa3_read_hdr(struct file *file, char __user *ubuf, size_t count,
 
 	list_for_each_entry(entry, &ipa3_ctx->hdr_tbl.head_hdr_entry_list,
 			link) {
+		if (entry->cookie != IPA_HDR_COOKIE)
+			continue;
 		nbytes = scnprintf(
 			dbg_buff,
 			IPA_MAX_MSG_LEN - 1,
@@ -515,6 +517,15 @@ static int ipa3_attrib_dump(struct ipa_rule_attrib *attrib,
 	if (attrib->attrib_mask & IPA_FLT_TCP_SYN_L2TP)
 		pr_err("tcp syn l2tp ");
 
+	if (attrib->attrib_mask & IPA_FLT_L2TP_INNER_IP_TYPE)
+		pr_err("l2tp inner ip type: %d ", attrib->type);
+
+	if (attrib->attrib_mask & IPA_FLT_L2TP_INNER_IPV4_DST_ADDR) {
+		addr[0] = htonl(attrib->u.v4.dst_addr);
+		mask[0] = htonl(attrib->u.v4.dst_addr_mask);
+		pr_err("dst_addr:%pI4 dst_addr_mask:%pI4 ", addr, mask);
+	}
+
 	pr_err("\n");
 	return 0;
 }
@@ -539,7 +550,10 @@ static int ipa3_attrib_dump_eq(struct ipa_ipfltri_rule_eq *attrib)
 			attrib->num_ihl_offset_range_16);
 		 return -EPERM;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	for (i = 0; i < attrib->num_ihl_offset_range_16; i++) {
 		pr_err(
 			   "(ihl_ofst_range16: ofst:%u lo:%u hi:%u) ",
@@ -798,6 +812,10 @@ static ssize_t ipa3_read_rt_hw(struct file *file, char __user *ubuf,
 			}
 		}
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 bail:
 	mutex_unlock(&ipa3_ctx->lock);
 	kfree(entry);
@@ -901,7 +919,11 @@ static ssize_t ipa3_read_flt(struct file *file, char __user *ubuf, size_t count,
 				entry->rule.max_prio, entry->prio);
 			if (eq) {
 				res = ipa3_attrib_dump_eq(
+<<<<<<< HEAD
 						&entry->rule.eq_attrib);
+=======
+					&entry->rule.eq_attrib);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 				if (res) {
 					IPAERR_RL("failed read attrib eq\n");
 					goto bail;
@@ -1785,7 +1807,7 @@ static ssize_t ipa3_enable_ipc_low(struct file *file,
 					"ipa_low", 0);
 		}
 			if (ipa_ipc_low_buff == NULL)
-				IPAERR("failed to get logbuf_low\n");
+				IPADBG("failed to get logbuf_low\n");
 		ipa3_ctx->logbuf_low = ipa_ipc_low_buff;
 	} else {
 		ipa3_ctx->logbuf_low = NULL;

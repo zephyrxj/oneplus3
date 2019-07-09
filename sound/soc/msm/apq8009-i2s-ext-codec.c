@@ -326,7 +326,11 @@ static struct snd_soc_dapm_route wcd9335_audio_paths[] = {
 };
 
 static char const *rx_bit_format_text[] = {"S16_LE", "S24_3LE", "S24_LE",
+<<<<<<< HEAD
 					"S32_LE"};
+=======
+								"S32_LE"};
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 static const char *const mi2s_tx_ch_text[] = {"One", "Two", "Three", "Four"};
 static char const *pri_rx_sample_rate_text[] = {"KHZ_48", "KHZ_96",
 					"KHZ_192", "KHZ_8",

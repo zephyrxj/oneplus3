@@ -342,7 +342,10 @@ static int msm_pcm_playback_prepare(struct snd_pcm_substream *substream)
 		sample_word_size = 16;
 		break;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	switch (q6core_get_avs_version()) {
 	case (Q6_SUBSYS_AVS2_7):
 		ret = q6asm_open_write_v3(prtd->audio_client,

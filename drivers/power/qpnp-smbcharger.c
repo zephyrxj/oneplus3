@@ -5291,9 +5291,13 @@ static int smbchg_set_optimal_charging_mode(struct smbchg_chip *chip, int type)
 static int smbchg_change_usb_supply_type(struct smbchg_chip *chip,
 						enum power_supply_type type)
 {
+<<<<<<< HEAD
 	int rc;
 	// default to DEFAULT_SDP_MA
 	int current_limit_ma = DEFAULT_SDP_MA;
+=======
+	int rc, current_limit_ma;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	union power_supply_propval propval;
 
 	/*
@@ -6812,11 +6816,54 @@ static void smbchg_external_power_changed(struct power_supply *psy)
 	if (rc == 0)
 		current_limit = prop.intval / 1000;
 
+<<<<<<< HEAD
 	if (prop.intval <= 2 && get_prop_batt_present(chip)) {
 		/* charger removed, set pre_current_limit 0 */
 		pre_current_limit = 0;
 		chip->chg_ovp = false;
 		chip->aicl_current = 0;
+=======
+	rc = chip->usb_psy->get_property(chip->usb_psy,
+				POWER_SUPPLY_PROP_REAL_TYPE, &prop);
+
+	read_usb_type(chip, &usb_type_name, &usb_supply_type);
+
+	if (!rc && usb_supply_type == POWER_SUPPLY_TYPE_USB &&
+			prop.intval != POWER_SUPPLY_TYPE_USB &&
+			is_usb_present(chip)) {
+		/* incorrect type detected */
+		pr_smb(PR_MISC,
+			"Incorrect charger type detetced - rerun APSD\n");
+		chip->hvdcp_3_det_ignore_uv = true;
+		pr_smb(PR_MISC, "setting usb psy dp=f dm=f\n");
+		power_supply_set_dp_dm(chip->usb_psy,
+				POWER_SUPPLY_DP_DM_DPF_DMF);
+		rc = rerun_apsd(chip);
+		if (rc)
+			pr_err("APSD re-run failed\n");
+		chip->hvdcp_3_det_ignore_uv = false;
+		if (!is_src_detect_high(chip)) {
+			pr_smb(PR_MISC, "Charger removed - force removal\n");
+			update_usb_status(chip, is_usb_present(chip), true);
+			return;
+		}
+
+		read_usb_type(chip, &usb_type_name, &usb_supply_type);
+		if (usb_supply_type == POWER_SUPPLY_TYPE_USB_DCP) {
+			schedule_delayed_work(&chip->hvdcp_det_work,
+				msecs_to_jiffies(HVDCP_NOTIFY_MS));
+			if (chip->parallel.use_parallel_aicl) {
+				reinit_completion(&chip->hvdcp_det_done);
+				pr_smb(PR_MISC, "init hvdcp_det_done\n");
+			}
+			smbchg_change_usb_supply_type(chip, usb_supply_type);
+		}
+
+		read_usb_type(chip, &usb_type_name, &usb_supply_type);
+		if (usb_supply_type == POWER_SUPPLY_TYPE_USB_DCP)
+			schedule_delayed_work(&chip->hvdcp_det_work,
+				msecs_to_jiffies(HVDCP_NOTIFY_MS));
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	}
 
 	if (current_limit && current_limit != pre_current_limit) {

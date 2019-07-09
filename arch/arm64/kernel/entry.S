@@ -117,7 +117,11 @@ alternative_else_nop_endif
 	.if	\el == 0
 	mrs	x21, sp_el0
 #ifdef CONFIG_THREAD_INFO_IN_TASK
+<<<<<<< HEAD
 	ldr_this_cpu	tsk, __entry_task, x20  // Ensure MDSCR_EL1.SS is clear,
+=======
+	ldr_this_cpu	tsk, __entry_task, x20	// Ensure MDSCR_EL1.SS is clear,
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
 #else
 	mov	tsk, sp

@@ -167,8 +167,12 @@ static int __init vdso_mappings_init(const char *name,
 				     const char *code_end,
 				     struct vdso_mappings *mappings)
 {
+<<<<<<< HEAD
 	unsigned long i, vdso_pages;
 	struct page **vdso_pagelist;
+=======
+	int i;
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 	unsigned long pfn;
 
 	if (memcmp(code_start, "\177ELF", 4)) {
@@ -196,7 +200,11 @@ static int __init vdso_mappings_init(const char *name,
 	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
 
 	/* Grab the vDSO code pages. */
+<<<<<<< HEAD
 	pfn = sym_to_pfn(code_start);
+=======
+	pfn = sym_to_pfn(&vdso_start);
+>>>>>>> 7477e8e18b8aa1fdf4b311988abc94a1192b5085
 
 	for (i = 0; i < vdso_pages; i++)
 		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
