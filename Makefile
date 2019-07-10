@@ -781,6 +781,9 @@ KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
 # disable stringop warnings in gcc 8+
 KBUILD_CFLAGS += $(call cc-disable-warning, stringop-truncation)
 
+# Needed to unbreak GCC 5.x and above
+KBUILD_CFLAGS += $(call cc-disable-warning,unused-const-variable,)
+
 # Needed to unbreak GCC 7.x and above
 KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
 
